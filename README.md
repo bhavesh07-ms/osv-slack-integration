@@ -1,218 +1,66 @@
-OSV to Slack Integration
+📦 OSV to Slack Integration
+A standalone Java application that monitors vulnerabilities in a package.json file using the OSV API and sends alerts via Slack DMs.
 
-This standalone Java application integrates the Open Source Vulnerabilities (OSV) Scanner with Slack to monitor a package.json file for npm package vulnerabilities and notify a specified Slack user via direct messages (DMs). It periodically checks for updates to package.json, scans new or updated packages using the OSV API, and sends formatted Slack DMs with vulnerability details or a confirmation of no vulnerabilities.
-
-Setup and Running Instructions
-
-Prerequisites
-
-
-
-
-
-Java: JDK 11 or higher
-
-
-
-Maven: For dependency management
-
-
-
-Docker: For containerized deployment
-
-
-
-OSV API: No API key required (uses public https://api.osv.dev/v1/query)
-
-
-
-Slack: A Slack workspace with a bot token (scopes: chat:write, users:read)
-
-
-
-Node.js: A package.json file for testing (e.g., with express or lodash)
-
-Installation
-
-
-
-
-
-Clone the Repository:
-
-git clone <local-repository>
+🚀 Features
+- Periodically monitors changes in package.json
+- Scans updated packages for vulnerabilities using the OSV API
+- Sends cleanly formatted Slack DM alerts for vulnerable or safe packages
+- Modular, event-driven Spring Boot architecture
+- 
+🛠️ Prerequisites
+- Java JDK 11 or higher
+- Maven
+- Docker (optional for containerization)
+- Slack bot token with `chat:write`, `users:read` scopes
+- Node.js and a valid package.json file
+- 
+📦 Installation & Running
+1️⃣ Clone the Repository
+git clone <repository-url>
 cd osv-slack-integration
-
-
-
-Configure Environment Variables: Create a .env file in the project root with:
-
+2️⃣ Set Up Environment Variables (.env)
 SLACK_TOKEN=your-slack-bot-token
 SLACK_USER_ID=your-slack-user-id
 PACKAGE_JSON_PATH=/path/to/package.json
 POLLING_INTERVAL_SECONDS=900
-
-
-
-
-
-Obtain SLACK_TOKEN from your Slack app (create at api.slack.com/apps).
-
-
-
-Find SLACK_USER_ID using Slack’s users.list API or user profile.
-
-
-
-Set PACKAGE_JSON_PATH to a local package.json file.
-
-
-
-Build the Application:
-
+3️⃣ Build the Project
 mvn clean install
-
-
-
-Run Locally:
-
+4️⃣ Run Locally
 java -jar target/osv-slack-integration-1.0.jar
-
-
-
-Run with Docker:
-
+5️⃣ Run with Docker
 docker build -t osv-slack-integration .
 docker run --env-file .env -v /path/to/package.json:/app/package.json osv-slack-integration
 
-Dependencies
-
-
-
-
-
-Spring Boot: Web, RestTemplate for API calls
-
-
-
-Jackson: JSON parsing for package.json and OSV responses
-
-
-
-SLF4J/Logback: Logging to file
-
-
-
-JUnit/Mockito: Unit testing
-
-
-
-Dotenv: Environment variable management
-
-Application Architecture
-
-The application follows a modular, event-driven design for scalability and maintainability:
-
-
-
-
-
-Config Module (config/): Loads environment variables (e.g., Slack token, polling interval) using dotenv-java.
-
-
-
-File Watcher Module (watcher/): Polls package.json for changes using Java’s WatchService or timestamp checks, triggering scans for new/updated packages.
-
-
-
-Parser Module (parser/): Parses package.json with Jackson to extract npm package names and versions.
-
-
-
-OSV Scanner Module (scanner/): Queries the OSV API (https://api.osv.dev/v1/query) to retrieve vulnerability details for each package.
-
-
-
-Slack Notifier Module (notifier/): Sends formatted DMs to a Slack user via chat.postMessage API.
-
-
-
-Logging Module (logging/): Uses SLF4J/Logback to log events (info, error) to app.log.
-
-
-
-Test Module (test/): JUnit/Mockito tests for parsing, scanning, and notification logic.
-
-The application runs as a Spring Boot service, with a scheduled task for polling and modular components for easy extension (e.g., adding email notifications).
-
-Example Slack Notifications
-
-With Vulnerabilities
-
+🧱 Architecture Overview
+- **Config Module**: Loads env variables using dotenv-java
+- **File Watcher**: Monitors package.json changes
+- **Parser Module**: Extracts package/version from JSON
+- **OSV Scanner**: Calls OSV API for vulnerability data
+- **Slack Notifier**: Sends formatted alerts to user
+- **Logger**: Logs to `logs/app.log`
+- **Tests**: Unit tests using JUnit & Mockito
+- 
+📨 Example Slack Alerts
+Vulnerable Package:
 Package: express@4.17.1
-Vulnerabilities:
-- ID: CVE-2023-12345, Summary: Cross-site scripting in express middleware
-- ID: CVE-2023-67890, Summary: Denial of service via malformed input
+- CVE-2023-12345: Cross-site scripting
+- CVE-2023-67890: Denial of service
 Scan time: 2025-07-15T11:20:00Z
-
-No Vulnerabilities
-
+Clean Package:
 Package: lodash@4.17.21
-The package is free from any vulnerabilities.
+No vulnerabilities found.
 Scan time: 2025-07-15T11:20:00Z
+🤖 AI Tool Usage
+Used Grok 3 (by xAI) for initial code generation and architecture guidance. All code was manually reviewed and tested.
 
-AI Tool Usage
-
-This project was developed with assistance from Grok 3, created by xAI, for:
-
-
-
-
-
-Generating initial code snippets for OSV API queries and Slack DM formatting.
-
-
-
-Structuring the modular architecture and suggesting logging best practices.
-
-
-
-Providing guidance on Java’s WatchService for file polling. All code was manually reviewed, tested, and adapted to ensure production-ready quality.
-
-Testing
-
+✅ Testing
 Run unit tests with:
-
 mvn test
-
-Tests cover:
-
-
-
-
-
-Parsing package.json to extract dependencies.
-
-
-
-Formatting Slack messages for vulnerable and clean packages.
-
-
-
-Mocking OSV API responses to validate vulnerability parsing.
-
-Notes
-
-
-
-
-
-The application checks package.json every 15 minutes (configurable via POLLING_INTERVAL_SECONDS).
-
-
-
-Logs are written to logs/app.log for troubleshooting.
-
-
-
-Do not publish this code publicly, as per Metron Security’s instructions.
+Tests include:
+- JSON parsing
+- OSV response mocking
+- Slack message formatting
+⚠️ Notes
+- Default polling: 15 minutes (can be configured)
+- Logs stored at `logs/app.log`
+- Internal use only. Do not publish externally.
